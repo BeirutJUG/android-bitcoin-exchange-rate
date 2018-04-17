@@ -26,6 +26,9 @@ public class MainActivity extends AppCompatActivity {
     private ProgressBar mProgressBar;
     private Handler mHandler = new Handler();
 
+    private long mLastCheckedTime = -1;
+    private double mBitcoinRate = -1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,6 +44,30 @@ public class MainActivity extends AppCompatActivity {
                 getLatestBitcoinRates();
             }
         });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        mLastCheckedTime = getPreferences(MODE_PRIVATE).getLong("lastChecked", -1);
+        mBitcoinRate = getPreferences(MODE_PRIVATE).getFloat("bitcoinRate", -1);
+
+        if(mLastCheckedTime != -1 && mBitcoinRate != -1) {
+            setCurrentExchangeRate(mBitcoinRate);
+            startLastCheckedTimeCounter(mLastCheckedTime);
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        getPreferences(MODE_PRIVATE)
+                .edit()
+                .putLong("lastChecked", mLastCheckedTime)
+                .putFloat("bitcoinRate", (float) mBitcoinRate)
+                .commit();
     }
 
     /**
@@ -75,6 +102,8 @@ public class MainActivity extends AppCompatActivity {
      * @param startTime
      */
     private void startLastCheckedTimeCounter(final long startTime) {
+        mLastCheckedTime = startTime;
+
         // Stop counting if handler has already been counting
         mHandler.removeCallbacksAndMessages(null);
 
@@ -92,6 +121,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setCurrentExchangeRate(double rateInUsd) {
+        mBitcoinRate = rateInUsd;
         mExchangeRateTextView.setText("1 Bitcoin = $" + rateInUsd);
     }
 
