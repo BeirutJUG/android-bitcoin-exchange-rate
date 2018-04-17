@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
 
 import com.murex.bitcoinrate.network.BitcoinRate;
 import com.murex.bitcoinrate.network.NetworkClient;
@@ -17,10 +18,14 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
 
+    private ProgressBar mProgressBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mProgressBar = findViewById(R.id.progressBar);
 
         findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,10 +57,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showLoader() {
-        // Todo
+        mProgressBar.setVisibility(View.VISIBLE);
     }
 
     private void hideLoader() {
-        // Todo
+        mProgressBar.setVisibility(View.GONE);
     }
 }
