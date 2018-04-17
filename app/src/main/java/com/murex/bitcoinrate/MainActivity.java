@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.murex.bitcoinrate.network.BitcoinRate;
 import com.murex.bitcoinrate.network.NetworkClient;
@@ -18,6 +19,7 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
 
+    private TextView mExchangeRateTextView;
     private ProgressBar mProgressBar;
 
     @Override
@@ -25,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mExchangeRateTextView = findViewById(R.id.textView);
         mProgressBar = findViewById(R.id.progressBar);
 
         findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
@@ -33,6 +36,10 @@ public class MainActivity extends AppCompatActivity {
                 getLatestBitcoinRates();
             }
         });
+    }
+
+    private void setCurrentExchangeRate(double rateInUsd) {
+        mExchangeRateTextView.setText("1 Bitcoin = $" + rateInUsd);
     }
 
     /**
@@ -45,6 +52,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Map<String, BitcoinRate>> call, Response<Map<String, BitcoinRate>> response) {
                 Log.d(TAG, "Successful!");
+                Map<String, BitcoinRate> rates = response.body();
+                BitcoinRate rateInUsd = rates.get("USD");
+
+                setCurrentExchangeRate(rateInUsd.getLast());
                 hideLoader();
             }
 
