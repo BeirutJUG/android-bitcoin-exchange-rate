@@ -34,16 +34,28 @@ public class MainActivity extends AppCompatActivity {
      * Send an api call to fetch the latest bitcoin rates
      */
     private void getLatestBitcoinRates() {
+        showLoader();
+
         NetworkClient.getLatestRates().enqueue(new Callback<Map<String, BitcoinRate>>() {
             @Override
             public void onResponse(Call<Map<String, BitcoinRate>> call, Response<Map<String, BitcoinRate>> response) {
                 Log.d(TAG, "Successful!");
+                hideLoader();
             }
 
             @Override
             public void onFailure(Call<Map<String, BitcoinRate>> call, Throwable t) {
                 Log.d(TAG, "Failed", t);
+                hideLoader();
             }
         });
+    }
+
+    private void showLoader() {
+        // Todo
+    }
+
+    private void hideLoader() {
+        // Todo
     }
 }
